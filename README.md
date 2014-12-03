@@ -52,6 +52,34 @@ Bitleu (a Scrypt-Jane coin) depends on the yac_scrypt module.
 Copperlark (a Keccak coin) depends on the sha3 module available via
 "easy_install pysha3".
 
+## OS X
+
+First, setup Postgres:
+
+- Install Postgres with Homebrew.
+- Run: `initdb /usr/local/var/postgres/`
+- Run: `postgres -D /usr/local/var/postgres/`
+- In a separate terminal window, run: `createdb abe` and `createuser USER`
+
+Next, create a file called `abe-pg.conf` in the bitcoin-abe directory. Assuming that you're trying to sync Peercoin, your blockchain data should be in ~/Library/Application\ Support/PPCoin. If so, set `abe-pg.conf` to contain:
+
+```
+dbtype psycopg2
+connect-args {"database":"abe"}
+upgrade
+port 2750
+
+datadir = [{
+    "dirname": "/Users/crmarsh/Library/Application Support/PPCoin/",
+    "chain": "PPCoin",   # Display as "PPCoin" ...
+    "policy": "PpcPosChain",  # ... but use the "PpcPosChain" loader.
+    "code3": "PPC"
+}]
+default-loader=blkfile
+```
+
+Finally, run: `python -m Abe.abe --config abe-pg.conf --commit-bytes 100000 --no-serve`. When this terminates (there are roughly 140,000 blocks in the Peercoin blockchain as of December 3, 2014), go to `http://localhost:2750` and your sync should be complete.
+
 License
 -------
 
